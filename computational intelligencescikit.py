@@ -6,14 +6,20 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import f1_score as calc_f1_score, precision_score, recall_score, roc_auc_score
 import matplotlib.pyplot as plt
 
-# Assuming your data is stored in the 'df' variable
-df = pd.read_csv('C:/Users/joeha/OneDrive/Documents/PythonScripts/garments_worker_productivity.csv', parse_dates=['date'])
+
+df = pd.read_csv('C:/Users/joeha/OneDrive/Documents/PythonScripts/ai/garments_worker_productivity.csv', 
+                 parse_dates=['date'])
 df['wip'] = df['wip'].fillna(0)
 df['date'] = df['date'].dt.dayofyear
-df['quarter'] = df['quarter'].map({'Quarter1': 1, 'Quarter2': 2, 'Quarter3': 3, 'Quarter4': 4, 'Quarter5': 5})
-df['day'] = df['day'].map({'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6, 'Sunday': 7})
-df['department'] = df['department'].map({'sewing': 1, 'finishing': 2, 'finishing ': 2})
-numerical_features = ['date', 'quarter', 'team', 'smv', 'wip', 'over_time', 'incentive', 'idle_time', 'idle_men', 'no_of_style_change', 'no_of_workers', 'department']
+df['quarter'] = df['quarter'].map({'Quarter1': 1, 'Quarter2': 2,
+                                    'Quarter3': 3, 'Quarter4': 4, 'Quarter5': 5})
+df['day'] = df['day'].map({'Monday': 1, 'Tuesday': 2, 
+                           'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6, 'Sunday': 7})
+df['department'] = df['department'].map({'sewing': 1, 
+                                         'finishing': 2, 'finishing ': 2})
+numerical_features = ['date', 'quarter', 'team', 'smv', 'wip',
+                       'over_time', 'incentive', 'idle_time', 'idle_men', 
+                       'no_of_style_change', 'no_of_workers', 'department']
 
 # Normalize the numerical features
 df[numerical_features] = (df[numerical_features] - df[numerical_features].min()) / (df[numerical_features].max() - df[numerical_features].min())
@@ -34,7 +40,8 @@ X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
 # Initialize the MLPClassifier with warm_start=True
-clf = MLPClassifier(hidden_layer_sizes=(50, 25), max_iter=1, random_state=42, warm_start=True)
+clf = MLPClassifier(hidden_layer_sizes=(50, 25), max_iter=1, random_state=42, warm_start=True,
+                     activation= 'tanh', learning_rate= 'adaptive', solver= 'adam')
 errors = []
 # Train the model for 10,000 epochs
 for epoch in range(3000):
@@ -49,7 +56,7 @@ for epoch in range(3000):
     recall = recall_score(y_test, y_pred)
     roc_score = roc_auc_score(y_test, y_pred_proba)
 
-    # Print the results (optional: you might want to print every n epochs)
+    # Print the results 
     if epoch % 1000 == 0:
         print(f"Epoch: {epoch+1}, Accuracy: {clf.score(X_test, y_test):.4f}, F1 Score: {f1:.4f}, Precision: {precision:.4f}, Recall: {recall:.4f}, ROC AUC: {roc_score:.4f}")
    
